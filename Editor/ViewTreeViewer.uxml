@@ -1,0 +1,15 @@
+<UXML xmlns="UnityEngine.UIElements">
+    <Style src="ViewTreeWindow.uss" />
+    <VisualElement class="main-container">
+        <IMGUIContainer name="viewTreeViewContainer" class="tree-view" />
+        <VisualElement name="infoPanel" class="info-panel">
+            <Label name="nameLabel" text="No Object Selected" class="label-heading" />
+            <VisualElement class="horizontal-container">
+                <Label name="stateLabel" text="" class="label-state" />
+            </VisualElement>
+            <ScrollView name="myScrollView" horizontal-scroller-visibility="Auto" vertical-scroller-visibility="Auto">
+                <IMGUIContainer name="inspectorContainer" class="inspector-panel" />
+            </ScrollView>
+        </VisualElement>
+    </VisualElement>
+</UXML>

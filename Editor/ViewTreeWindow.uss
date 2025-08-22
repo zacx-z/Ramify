@@ -1,0 +1,43 @@
+.main-container {
+    flex-direction: row;
+    flex-grow: 1;
+}
+
+.horizontal-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.tree-view {
+    flex-grow: 1;
+    width: 35% !important;
+    min-width: 200px;
+    background-color: #383838;
+}
+
+.info-panel {
+    flex-grow: 1;
+    width: 65%;
+    min-width: 200px;
+    background-color: #2c2c2c;
+    padding: 10px;
+}
+
+.label-heading {
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 10px;
+}
+
+.label-state {
+    font-size: 12px;
+    -unity-font-style: bold;
+    border-color: black;
+    border-width: 1px;
+}
+
+.label-state.active {
+    border-color: aqua;
+    color: aqua;
+}
