@@ -124,8 +124,22 @@ namespace Nela.Ramify {
         }
 
         public void SetViewRoot(View root) {
+            if (_rootView == root) return;
             _rootView = root;
             Reload();
+        }
+
+        public void ExpandToShow(View selected) {
+            var ids = new HashSet<int>(GetExpanded());
+            var item = FindItem(selected.GetInstanceID(), rootItem);
+
+            var ancestor = item.parent;
+            while (ancestor != null) {
+                ids.Add(ancestor.id);
+                ancestor = ancestor.parent;
+            }
+
+            SetExpanded(ids.ToList());
         }
     }
 }

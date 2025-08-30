@@ -7,7 +7,7 @@ namespace Nela.Ramify {
     public class Logger {
         public static List<ILogger> loggers = new List<ILogger>();
         public static void LogError(Exception exception, View view, UnityEngine.Object context = null) {
-            Debug.LogError($"Error during injection:\nContext:{context}\n{exception.Message}\n{exception.StackTrace}", view);
+            Debug.LogError($"Injection error: (Check the error by Inspecting Bindings button on the inspector of the target object)\nContext:{context}\n{exception.Message}\n{exception.StackTrace}", view);
 
             foreach (var logger in loggers) {
                 logger.Log(exception, view, context);
