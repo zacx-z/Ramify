@@ -466,7 +466,6 @@ namespace Nela.Ramify {
                 }
                 catch (IndexOutOfRangeException) {
                     throw new SequenceReachEndException();
-                    throw new InvalidOperationException($"Can't get more values from the sequential binding of type {typeof(T)}");
                 }
             }
 

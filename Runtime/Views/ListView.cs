@@ -28,9 +28,16 @@ namespace Nela.Ramify {
 
         protected virtual void InitItems() {
             if (viewModel == null) return;
-            for (int i = 0; i < viewModel.childViewModels.Count; i++) {
+            int i = 0;
+            for (; i < viewModel.childViewModels.Count; i++) {
                 if (i >= _items.Count)
                     _items.Add(CreateNewItem(i));
+                else
+                    _items[i].gameObject.SetActive(true);
+            }
+
+            for (; i < _items.Count; i++) {
+                _items[i].gameObject.SetActive(false);
             }
         }
 
