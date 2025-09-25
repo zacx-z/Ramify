@@ -15,14 +15,15 @@ namespace Nela.Ramify {
 
         public IReadOnlyCollection<TChildView> items => _items;
 
+        protected override void OnInject(DIContainer diContainer) {
+            ClearItems(); // to allow it to be reused
+            base.OnInject(diContainer);
+        }
+
         protected override void OnViewModelInit() {
             base.OnViewModelInit();
 
             InitItems();
-        }
-
-        protected void AppendNewItem() {
-            _items.Add(CreateNewItem(_items.Count));
         }
 
         protected virtual void InitItems() {
@@ -31,6 +32,13 @@ namespace Nela.Ramify {
                 if (i >= _items.Count)
                     _items.Add(CreateNewItem(i));
             }
+        }
+
+        protected virtual void ClearItems() {
+            foreach (var item in _items) {
+                DestroyImmediate(item.gameObject);
+            }
+            _items.Clear();
         }
 
         protected virtual TChildView CreateNewItem(int itemIndex) {

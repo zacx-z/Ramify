@@ -11,10 +11,11 @@ namespace Nela.Ramify {
         public struct ReferenceInfo {
             public object viewModel;
             public Object source;
+            public Type type;
         }
 
         private static readonly Dictionary<View, List<ReferenceInfo>> _referenceMap = new Dictionary<View, List<ReferenceInfo>>();
-        private static readonly Dictionary<Object, List<object>> _providedViewModels = new Dictionary<Object, List<object>>();
+        private static readonly Dictionary<Object, List<ReferenceInfo>> _providedViewModels = new Dictionary<Object, List<ReferenceInfo>>();
         private static readonly Dictionary<View, IReadOnlyList<IViewModel>> _boundViewModels = new Dictionary<View, IReadOnlyList<IViewModel>>();
 
         static ViewTreeDebugger() {
@@ -26,24 +27,29 @@ namespace Nela.Ramify {
             Logger.loggers.Add(new DebugLogger());
         }
 
-        private static void AddReference(object viewModel, View view, Object source) {
+        private static void AddReference(object viewModel, View view, Type type, Object source) {
             if (!_referenceMap.TryGetValue(view, out var list)) {
                 list = new List<ReferenceInfo>();
                 _referenceMap.Add(view, list);
             }
-            list.Add(new ReferenceInfo()
+
+            list.RemoveAll(refInfo => refInfo.type == type);
+
+            var refInfo = new ReferenceInfo()
             {
                 viewModel = viewModel,
                 source = source,
-            });
+                type = type,
+            };
+            list.Add(refInfo);
 
             if (source != null) {
                 if (!_providedViewModels.TryGetValue(source, out var mList)) {
-                    mList = new List<object>();
+                    mList = new List<ReferenceInfo>();
                     _providedViewModels.Add(source, mList);
                 }
 
-                mList.Add(viewModel);
+                mList.Add(refInfo);
             }
         }
 
@@ -51,9 +57,9 @@ namespace Nela.Ramify {
             _boundViewModels[view] = viewModels.ToList();
         }
 
-        private static void AddReferenceForObservable(IObservable<object> viewModelObservable, View view, Object source) {
+        private static void AddReferenceForObservable(IObservable<object> viewModelObservable, View view, Type type, Object source) {
             viewModelObservable.Subscribe(viewModel => {
-                AddReference(viewModel, view, source);
+                AddReference(viewModel, view, type, source);
             });
         }
 
@@ -69,12 +75,12 @@ namespace Nela.Ramify {
             return view.HasBindings();
         }
 
-        public static IReadOnlyList<object> GetProvidedViewModels(Object source) {
+        public static IReadOnlyList<ReferenceInfo> GetProvidedViewModels(Object source) {
             if (_providedViewModels.TryGetValue(source, out var list)) {
                 return list;
             }
 
-            return Array.Empty<object>();
+            return Array.Empty<ReferenceInfo>();
         }
 
         /// <summary>

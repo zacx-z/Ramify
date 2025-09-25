@@ -277,6 +277,10 @@ namespace Nela.Ramify {
 
         protected virtual void OnDestroy() {
             if (viewModel != null) DisposeViewModel();
+            if (_viewModelSubscription != null) {
+                _viewModelSubscription.Dispose();
+                _viewModelSubscription = null;
+            }
         }
 
         // receives broadcast message from outside

@@ -113,7 +113,7 @@ namespace Nela.Ramify {
                 var binding = _scopes.Peek().FindBinding(type);
                 var result = binding.GetValue(_scopes);
 #if UNITY_EDITOR
-                onResolveFor?.Invoke(result, currentView, binding.source);
+                onResolveFor?.Invoke(result, currentView, binding.bindingType, binding.source);
 #endif
                 return result;
             }
@@ -133,7 +133,7 @@ namespace Nela.Ramify {
                 var binding = _scopes.Peek().FindBinding(type);
                 var result = (IObservable<object>)binding.ObserveValue(_scopes);
 #if UNITY_EDITOR
-                onResolveObservableFor?.Invoke(result, currentView, binding.source);
+                onResolveObservableFor?.Invoke(result, currentView, binding.bindingType, binding.source);
 #endif
                 return result;
             }
@@ -164,7 +164,7 @@ namespace Nela.Ramify {
                 if (!bindingRef.isNil()) {
                     value = bindingRef.entry.GetValue(_scopes);
 #if UNITY_EDITOR
-                    onResolveFor?.Invoke(value, currentView, bindingRef.entry.source);
+                    onResolveFor?.Invoke(value, currentView, bindingRef.entry.bindingType, bindingRef.entry.source);
 #endif
                     return true;
                 }
@@ -196,7 +196,7 @@ namespace Nela.Ramify {
                 if (!bindingRef.isNil()) {
                     value = bindingRef.entry.ObserveValue(_scopes);
 #if UNITY_EDITOR
-                    onResolveObservableFor?.Invoke((IObservable<object>)value, currentView, bindingRef.entry.source);
+                    onResolveObservableFor?.Invoke((IObservable<object>)value, currentView, bindingRef.entry.bindingType, bindingRef.entry.source);
 #endif
                     return true;
                 }
@@ -272,7 +272,7 @@ namespace Nela.Ramify {
                     bindingRef.entry = bindingEntry;
                     bindingRef.enclosingScope = this;
                 } else {
-                    bindingRef.entry = new ConflictedBindingEntry();
+                    bindingRef.entry = new ConflictedBindingEntry(type);
                 }
                 _bindings[type] = bindingRef;
             }
@@ -377,6 +377,7 @@ namespace Nela.Ramify {
 
 #if UNITY_EDITOR
             public Object source { get; set; }
+            public abstract Type bindingType { get; }
 #endif
         }
 
@@ -403,6 +404,10 @@ namespace Nela.Ramify {
                 if (!_hasValue) throw new NoValueException(typeof(T));
                 return _reactiveValue ??= new ReactiveValue<T>(_value);
             }
+
+#if UNITY_EDITOR
+            public override Type bindingType => typeof(T);
+#endif
 
             public void Rebind(T value) {
                 _value = value;
@@ -477,6 +482,10 @@ namespace Nela.Ramify {
                 }
             }
 
+#if UNITY_EDITOR
+            public override Type bindingType => typeof(T);
+#endif
+
             public void RebindItem(int index, T value) {
                 values[index] = value;
                 observedValues[index]?.OnNext(value);
@@ -532,12 +541,22 @@ namespace Nela.Ramify {
                 return new ReactiveValue<T>(_factory());
             }
 
+#if UNITY_EDITOR
+            public override Type bindingType => typeof(T);
+#endif
+
             public void Rebind(T value) {
                 throw new NotSupportedException();
             }
         }
 
         private class ConflictedBindingEntry : BindingEntry {
+            private readonly Type _type;
+
+            public ConflictedBindingEntry(Type type) {
+                _type = type;
+            }
+
             public override object GetValue(ScopeStack scopeStack) {
                 throw new ConflictedValueException();
             }
@@ -545,12 +564,16 @@ namespace Nela.Ramify {
             public override object ObserveValue(ScopeStack scopeStack) {
                 throw new ConflictedValueException();
             }
+
+#if UNITY_EDITOR
+            public override Type bindingType => _type;
+#endif
         }
 
         #region Debug Context
 #if UNITY_EDITOR
-        public static event Action<object, View, Object> onResolveFor;
-        public static event Action<IObservable<object>, View, Object> onResolveObservableFor;
+        public static event Action<object, View, Type, Object> onResolveFor;
+        public static event Action<IObservable<object>, View, Type, Object> onResolveObservableFor;
 
         private Object _defaultSource = null;
 

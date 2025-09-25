@@ -30,7 +30,7 @@ namespace Nela.Ramify {
                     GUILayout.Label("View Model References", UnityEditor.EditorStyles.boldLabel);
                     foreach (var refInfo in references) {
                         using (new GUILayout.HorizontalScope()) {
-                            GUILayout.Label($"{refInfo.viewModel}");
+                            GUILayout.Label($"{(refInfo.viewModel == null ? "<none>" : refInfo.viewModel.ToString())}:{refInfo.type}");
                             GUILayout.FlexibleSpace();
                             if (GUILayout.Button(refInfo.source.name, EditorStyles.activeBinding)) {
                                 if (currentViewTreeWindow != null) {
@@ -46,8 +46,8 @@ namespace Nela.Ramify {
                 var viewModels = ViewTreeDebugger.GetProvidedViewModels(view);
                 if (viewModels.Count > 0) {
                     GUILayout.Label("View Models Provided", UnityEditor.EditorStyles.boldLabel);
-                    foreach (var vm in viewModels) {
-                        GUILayout.Label($"{(vm == null ? "<none>" : vm.ToString())}");
+                    foreach (var refInfo in viewModels) {
+                        GUILayout.Label($"{(refInfo.viewModel == null ? "<none>" : refInfo.viewModel.ToString())}:{refInfo.type}");
                     }
                 }
 
