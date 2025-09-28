@@ -83,7 +83,7 @@ namespace Nela.Ramify {
             } else {
                 var selection = GetSelection();
                 var thisView = EditorUtility.InstanceIDToObject(args.item.id) as View;
-                if (thisView != null && ViewTreeDebugger.CollectReferences(thisView).Any(r => selection.Contains(r.source.GetInstanceID()))) {
+                if (thisView != null && ViewTreeDebugger.CollectReferences(thisView).Any(r => r.source != null && selection.Contains(r.source.GetInstanceID()))) {
                     GUI.Label(symbolRect, "↵");
                     rowRect.xMax -= 20;
                 }

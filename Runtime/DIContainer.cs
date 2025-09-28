@@ -84,9 +84,7 @@ namespace Nela.Ramify {
 
 
         private void AddBindingWithInterfaces(Type type, BindingEntry bindingEntry) {
-            if (!AddBinding(type, bindingEntry)) {
-                throw new MissingViewModelException(type);
-            }
+            AddBinding(type, bindingEntry);
 
             bindingEntry.source = currentSource;
             foreach (var @interface in type.GetViewModelInterfaces()) {
@@ -94,10 +92,9 @@ namespace Nela.Ramify {
             }
         }
 
-        private bool AddBinding(Type type, BindingEntry bindingEntry) {
+        private void AddBinding(Type type, BindingEntry bindingEntry) {
             var currentScope = _scopes.Peek();
             currentScope.AddBinding(type, bindingEntry);
-            return true;
         }
 
         public T Resolve<T>() {

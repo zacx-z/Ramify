@@ -34,7 +34,7 @@ namespace Nela.Ramify {
     }
 
     public class MissingViewModelException : ViewModelExceptionBase {
-        public override string Message => $"Can't bind to {viewModelType} when there is already a value in the current scope.";
+        public override string Message => $"Can find view models of {viewModelType}.";
 
         public MissingViewModelException(Type viewModelType) : base(viewModelType) {
         }
