@@ -94,16 +94,19 @@ namespace Nela.Ramify {
             }
 
             public void Inject(DIContainer container) {
-                RecursiveInject(_rootView.transform, container, _rootView.GetComponents<View>());
+                RecursiveInject(_rootView.transform, container, true, _rootView.GetComponents<View>());
             }
 
-            private void RecursiveInject(Transform node, DIContainer container, params View[] views) {
-                var treeNode = node.GetComponent<ViewTreeNode>();
+            private void RecursiveInject(Transform node, DIContainer container, bool isRoot, params View[] views) {
+                var treeNode = node.GetComponent<InjectionOptions>();
                 
                 if (treeNode != null) {
-                    if (treeNode.traverseType == ViewTreeNode.TraverseType.Ignore)
+                    if (treeNode.injectionType == InjectionOptions.InjectionType.Ignore)
                         return;
-                    if (!treeNode.gameObject.activeInHierarchy && treeNode.traverseType == ViewTreeNode.TraverseType.IgnoreWhenInactive)
+                    if (treeNode.injectionType == InjectionOptions.InjectionType.OnlyAsBindingRoot && !isRoot) {
+                        return;
+                    }
+                    if (!treeNode.gameObject.activeInHierarchy && treeNode.injectionType == InjectionOptions.InjectionType.IgnoreWhenInactive)
                         return;
                 }
 
@@ -142,7 +145,7 @@ namespace Nela.Ramify {
                 }
 
                 foreach (Transform child in node.transform) {
-                    RecursiveInject(child, container, child.GetComponents<View>());
+                    RecursiveInject(child, container, false, child.GetComponents<View>());
                 }
 
                 if (afterInjectionViews != null) {
@@ -169,7 +172,7 @@ namespace Nela.Ramify {
                     foreach (var view in _cachedMarkedViews) {
                         var container = GetModelContainer(view);
                         foreach (Transform child in view.transform) {
-                            RecursiveInject(child, container, child.GetComponents<View>());
+                            RecursiveInject(child, container, false, child.GetComponents<View>());
                         }
                     }
 
