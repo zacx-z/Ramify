@@ -7,8 +7,7 @@ namespace Nela.Ramify {
 
         protected override void OnInject(DIContainer diContainer) {
             base.OnInject(diContainer);
-            var vm = viewModel.GetViewModel(_query);
-            diContainer.Bind(vm, vm.GetType());
+            diContainer.BindReactive(viewModelObservable, vm => vm.GetViewModel(_query), null);
         }
     }
 }

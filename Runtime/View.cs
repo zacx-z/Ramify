@@ -7,11 +7,19 @@ using Object = UnityEngine.Object;
 namespace Nela.Ramify {
     public abstract class View : MonoBehaviour {
         public abstract Type viewModelType { get; }
+
+        private void Inject(DIContainer diContainer) {
+            OnInject(diContainer);
+            OnPostInject();
+        }
+
         /// <summary>
         /// Implement this function to initialize this view and add new bindings to the DI container for child views.
         /// </summary>
         /// <param name="diContainer">DI container of ViewModels</param>
         protected abstract void OnInject(DIContainer diContainer);
+
+        protected virtual void OnPostInject() {}
 
         protected virtual void OnAfterInjectChildren() {}
         protected virtual void OnViewRecycled() {}
@@ -126,7 +134,7 @@ namespace Nela.Ramify {
                             container.currentView = view;
                             afterInjectionViews.Add(view);
                             _visitorMap[view] = this;
-                            view.OnInject(container);
+                            view.Inject(container);
                             view.diContainerPointer = pointer;
                             container.currentView = null;
                         }
@@ -210,6 +218,18 @@ namespace Nela.Ramify {
         private bool _pendingInitCall = false;
         private Dictionary<Type,IBinding> _childrenBindings;
         private IDisposable _viewModelSubscription;
+        /// <summary>
+        /// Observable of the bound view model.
+        /// </summary>
+        /// Initialized after View.OnInjection() that can be utilized for reactively binding child view models.
+        /// <example>
+        /// ```csharp
+        /// diContainer.BindReactive(_viewModelObservable, vm => vm.someViewModel);
+        /// 
+        /// diContainer.BindSequenceReactive(_viewModelObservable, vm => vm.someViewModelList);
+        /// ```
+        /// </example>
+        protected IReactiveValue<TViewModel> viewModelObservable { get; private set; }
 
         public void AssignNewViewModel(TViewModel viewModel) {
             if (hasViewModel) DisposeViewModel();
@@ -253,6 +273,10 @@ namespace Nela.Ramify {
                 _childrenBindings.Add(vmType, diContainer.CreateBinding(vmType));
             }
 
+            this.viewModelObservable = viewModelObservable;
+        }
+
+        protected override void OnPostInject() {
             _viewModelSubscription = viewModelObservable.Subscribe(AssignNewViewModel);
         }
 

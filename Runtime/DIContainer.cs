@@ -52,6 +52,12 @@ namespace Nela.Ramify {
             return (IBinding)binding;
         }
 
+        public IBinding<T> CreateBinding<T>() where T : IViewModel {
+            var binding = new SingleBindingEntry<T>();
+            AddBindingWithInterfaces(typeof(T), binding);
+            return binding;
+        }
+
         public ISequenceBinding<T> BindSequence<T>(IEnumerable<T> values) where T : IViewModel {
             var binding = new SequenceBindingEntry<T>(values);
             AddBindingWithInterfaces(typeof(T), binding);

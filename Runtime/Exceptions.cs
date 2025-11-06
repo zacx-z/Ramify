@@ -34,7 +34,7 @@ namespace Nela.Ramify {
     }
 
     public class MissingViewModelException : ViewModelExceptionBase {
-        public override string Message => $"Can find view models of {viewModelType}.";
+        public override string Message => $"Can't find view models of {viewModelType}.";
 
         public MissingViewModelException(Type viewModelType) : base(viewModelType) {
         }
