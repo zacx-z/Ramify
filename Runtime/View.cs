@@ -312,7 +312,7 @@ namespace Nela.Ramify {
 
         // receives broadcast message from outside
         protected override void OnViewRecycled() {
-            DisposeViewModel();
+            if (viewModel != null) DisposeViewModel();
             if (_viewModelSubscription != null) {
                 _viewModelSubscription.Dispose();
                 _viewModelSubscription = null;

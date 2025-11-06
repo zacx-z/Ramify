@@ -6,7 +6,7 @@ A lightweight Model-View-ViewModel (MVVM) framework for Unity with a powerful bi
 
 Ramify is a Unity package that provides a robust MVVM architecture implementation with dependency injection and reactive bindings. It allows you to create modularized HUDs and UIs with custom view models and views. While it does not faciliate complex UI interactions, it can be used together with other UI frameworks for a complete solution.
 
-Ramify is inspired by MVVM architecture and [Zenject](https://github.com/modesttree/Zenject).
+Ramify is inspired by MVVM architecture and [Zenject](https://github.com/modesttree/Zenject). For full documentation, check this [link](http://nelasystem.com/lab/Ramify).
 
 ## Features
 
