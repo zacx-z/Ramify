@@ -13,7 +13,7 @@ namespace Nela.Ramify {
 
         protected List<TChildView> _items = new List<TChildView>();
 
-        public IReadOnlyCollection<TChildView> items => _items;
+        public IReadOnlyList<TChildView> items => _items;
 
         protected override void OnInject(DIContainer diContainer) {
             ClearItems(); // to allow it to be reused
