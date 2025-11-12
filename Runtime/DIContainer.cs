@@ -92,7 +92,9 @@ namespace Nela.Ramify {
         private void AddBindingWithInterfaces(Type type, BindingEntry bindingEntry) {
             AddBinding(type, bindingEntry);
 
+#if UNITY_EDITOR
             bindingEntry.source = currentSource;
+#endif
             foreach (var @interface in type.GetViewModelInterfaces()) {
                 AddBinding(@interface, bindingEntry);
             }

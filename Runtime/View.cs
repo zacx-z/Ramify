@@ -131,12 +131,16 @@ namespace Nela.Ramify {
                             continue;
                         }
                         try {
+#if UNITY_EDITOR
                             container.currentView = view;
+#endif
                             afterInjectionViews.Add(view);
                             _visitorMap[view] = this;
                             view.Inject(container);
                             view.diContainerPointer = pointer;
+#if UNITY_EDITOR
                             container.currentView = null;
+#endif
                         }
                         catch (Exception e) {
                             Logger.LogError(e, view, _context);

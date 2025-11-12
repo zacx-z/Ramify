@@ -1,6 +1,6 @@
 {
     "name":"com.nela-system.ramify",
-    "version":"0.2.0",
+    "version":"0.2.1",
     "description":"A MVVM framework with binding system",
     "displayName":"Ramify MVVM Framework",
     "unity":"2021.3"
